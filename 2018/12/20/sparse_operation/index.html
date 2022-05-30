@@ -1,37 +1,614 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="scipy.sparse 提供了稀疏矩阵的操作，稀疏数据使用传统的存储方式总会有各种各样的缺点，而直接用sparse的方式进行存储和操作，使得代码编写便捷，并且大大提高了程序运行性能，本文旨在总结学习如何使用Python的scipy.sparse库与TensorFlow进行稀疏矩阵存储，运算等操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sparse matrix operation in scipy &amp; tensorflow">
+<meta property="og:url" content="http://yoursite.com/2018/12/20/sparse_operation/index.html">
+<meta property="og:site_name" content="LIN">
+<meta property="og:description" content="scipy.sparse 提供了稀疏矩阵的操作，稀疏数据使用传统的存储方式总会有各种各样的缺点，而直接用sparse的方式进行存储和操作，使得代码编写便捷，并且大大提高了程序运行性能，本文旨在总结学习如何使用Python的scipy.sparse库与TensorFlow进行稀疏矩阵存储，运算等操作。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-12-20T13:14:00.000Z">
+<meta property="article:modified_time" content="2018-12-20T13:14:00.000Z">
+<meta property="article:author" content="Lin">
+<meta property="article:tag" content="我要毕业！！！！">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2018/12/20/sparse_operation/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'default'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>Sparse matrix operation in scipy & tensorflow | LIN</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="تشغيل شريط التصفح">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LIN</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>معلومات</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>التصنيفات</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>الأرشيفات</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/20/sparse_operation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Lin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LIN">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Sparse matrix operation in scipy & tensorflow
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">نُشر في</span>
+
+              <time title="أُنشأ: 2018-12-20 21:14:00" itemprop="dateCreated datePublished" datetime="2018-12-20T21:14:00+08:00">2018-12-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">في</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+                  ، 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/sparse-matrix/" itemprop="url" rel="index"><span itemprop="name">sparse matrix</span></a>
+                </span>
+                  ، 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/sparse-matrix/scipy-sparse/" itemprop="url" rel="index"><span itemprop="name">scipy.sparse</span></a>
+                </span>
+                  ، 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/sparse-matrix/tensorflow-sparse-tensor/" itemprop="url" rel="index"><span itemprop="name">tensorflow sparse tensor</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>scipy.sparse 提供了稀疏矩阵的操作，稀疏数据使用传统的存储方式总会有各种各样的缺点，而直接用sparse的方式进行存储和操作，使得代码编写便捷，并且大大提高了程序运行性能，本文旨在总结学习如何使用Python的scipy.sparse库与TensorFlow进行稀疏矩阵存储，运算等操作。</p>
+<span id="more"></span>
+
+<h1 id="scipy-sparse"><a href="#scipy-sparse" class="headerlink" title="scipy.sparse"></a>scipy.sparse</h1><ol>
+<li>coo_matrix <ol>
+<li>是一种坐标形式的稀疏矩阵，也是常说的ijv或triple格式</li>
+<li>初始化的几种方法:<ul>
+<li>coo_matrix(D) <ul>
+<li>D为稠密矩阵</li>
+</ul>
+</li>
+<li>coo_matrix(S)<ul>
+<li>S为另一个稀疏矩阵，也可以表示为：S.tocoo()</li>
+</ul>
+</li>
+<li>coo_matrix((M,N),[dtype]) <ul>
+<li>construct an empty matrix with shape(M,N).dtype is an optional parameter with default dtype&#x3D;d</li>
+</ul>
+</li>
+<li>coo_matrix((data,(i,j)) , [shape&#x3D;(M,N)])<ul>
+<li>construct coo_matrix with 3 arrays</li>
+<li>data[:]是值</li>
+<li>i[:]是行的索引（坐标）</li>
+<li>j[:]是列的索引（坐标）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>稀疏矩阵的优点<ul>
+<li>sparse matrix supports arithmetic operations including addition, subtraction, multiplication, division, and matrix power(矩阵幂运算)</li>
+</ul>
+</li>
+<li>coo格式的优缺点<ol>
+<li>优点<ol>
+<li>faciliates fast conversion among sparse formats(促进各种格式稀疏矩阵之间的快速转换)</li>
+<li>permit duplicate entries(see examples)（coo_matrix 支持相同的坐标输入多次,支持相同的坐标下存放多个值）</li>
+<li>very fast conversion to and from CSR&#x2F;CSC formats(可以快速转换到CSR&#x2F;CSC格式，或从CSR&#x2F;CSC格式转换回来)</li>
+</ol>
+</li>
+<li>缺点<ol>
+<li>不直接支持算术运算和切片</li>
+<li>不支持元素插入或删除</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>coo_matrix 格式使用目的<ol>
+<li>coo is a fast format for constructing sparse matrices</li>
+<li>coo_matrix 被建好后，可以转换到CSR&#x2F;CSC格式来进行快速运算和矩阵向量操作</li>
+<li>当coo_matrix转换为CSR&#x2F;CSC格式之后，duplicat(i,j)将会被summed together.有助于有效构造有限的矩阵</li>
+</ol>
+</li>
+<li>coo_matrix 属性<ol>
+<li>dtype<ul>
+<li>data的数据格式</li>
+</ul>
+</li>
+<li>shape(2-tuple)<ul>
+<li>get the shape of matrix</li>
+</ul>
+</li>
+<li>nnz<ul>
+<li>number of stored values , including explicit zeros</li>
+</ul>
+</li>
+<li>data<ul>
+<li>COO format data array</li>
+</ul>
+</li>
+<li>row<ul>
+<li>COO format row index array (x坐标数组)</li>
+</ul>
+</li>
+<li>col  <ul>
+<li>COO format column index array （y坐标数组）</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>identity matrix in sparse format（稀疏单位矩阵）<ol>
+<li>scipy.sparse.identity(n , dtype &#x3D;’d’ , format &#x3D; None)</li>
+<li>返回一个n*n的单位矩阵</li>
+<li>parameters<ol>
+<li>n<ul>
+<li>返回n*n矩阵，n为shape</li>
+</ul>
+</li>
+<li>dtype<ul>
+<li>数据格式</li>
+</ul>
+</li>
+<li>format<ul>
+<li>CSR,DIA(斜对角)等格式</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.sparse.csr_matrix.html">csr_matrix</a><ol>
+<li>压缩行矩阵（compressed sparse row matrix）</li>
+<li>scipy.sparse.csr_matrix(arg1 , shape &#x3D; None , dtype &#x3D; None , copy &#x3D; False)</li>
+<li>实例化方式<ol>
+<li>csr_matrix(D)</li>
+<li>csr_matrix(S)</li>
+<li>csr_matrix((M,N) , [dtype])<ul>
+<li>M*N的空矩阵</li>
+</ul>
+</li>
+<li>csr_matrix((data, ij) , [shape&#x3D;(M,N)])<ul>
+<li>与coo_matrix相似</li>
+</ul>
+</li>
+<li>csr_matrix((data, indices, indptr), [shape &#x3D; (M,N)])<ul>
+<li>data表示所有的非零元素的集合</li>
+<li>indices表示所有非零元素在每行中的列下表</li>
+<li>indptr[0,1,3,6]0后有几个数字表示有几行，数字代表行末的data</li>
+</ul>
+</li>
+<li>优缺点<ol>
+<li>优点<ol>
+<li>高效的运算+，*等</li>
+<li>行切片</li>
+<li>快速的矩阵向量乘法</li>
+</ol>
+</li>
+<li>缺点<ol>
+<li>列切片慢</li>
+<li>稀疏结构的改变代价高(使用LIL或DOK)</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>属性<ol>
+<li>nnz<ul>
+<li>get the count of explicitly-sorted values</li>
+</ul>
+</li>
+<li>has_sorted_indices<ul>
+<li>determine whether the matrix has sorted indices</li>
+</ul>
+</li>
+<li>dtype<ul>
+<li>data type</li>
+</ul>
+</li>
+<li>shape<ul>
+<li>M*N</li>
+</ul>
+</li>
+<li>ndim<ul>
+<li>always 2(means M*N two dimention)</li>
+</ul>
+</li>
+<li>data<ul>
+<li>CSR format data array</li>
+</ul>
+</li>
+<li>indices<ul>
+<li>CSR format index array</li>
+</ul>
+</li>
+<li>indptr<ul>
+<li>CSR format index point array</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>stack<ol>
+<li>scipy.sparse.hstack<ol>
+<li>stack sparse matrices horizontally (column wise)</li>
+<li>parameters<ol>
+<li>blocks<ol>
+<li>sequence of sparse matrices with compatible shapes</li>
+</ol>
+</li>
+<li>format &#x3D; None</li>
+<li>dtype &#x3D; None</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>scipy,sparse.vstack<ol>
+<li>stack sparse matrices vertically (row wise)</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="tensorflow-sparse-operation"><a href="#tensorflow-sparse-operation" class="headerlink" title="tensorflow sparse operation"></a>tensorflow sparse operation</h1><ol>
+<li><p>tf.sparse.SparseTensor</p>
+</li>
+<li><p>tf.sparse.matmul</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/06/NFM%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" rel="prev" title="NFM阅读笔记">
+      <i class="fa fa-chevron-left"></i> NFM阅读笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/27/Metrics/" rel="next" title="Some usual Metrics in Recommender System">
+      Some usual Metrics in Recommender System <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          المحتويات
+        </li>
+        <li class="sidebar-nav-overview">
+          عام
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#scipy-sparse"><span class="nav-number">1.</span> <span class="nav-text">scipy.sparse</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tensorflow-sparse-operation"><span class="nav-number">2.</span> <span class="nav-text">tensorflow sparse operation</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Lin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">المقالات</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">التصنيفات</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lin</span>
+</div>
+  <div class="powered-by">تطبيق الموقع <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
