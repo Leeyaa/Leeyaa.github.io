@@ -156,6 +156,82 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/30/fairseqQA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Lin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LIN">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/30/fairseqQA/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-05-30 13:19:48" itemprop="dateCreated datePublished" datetime="2022-05-30T13:19:48+08:00">2022-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-05-20 11:37:31" itemprop="dateModified" datetime="2022-05-20T11:37:31+08:00">2022-05-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="preprocess"><a href="#preprocess" class="headerlink" title="preprocess"></a>preprocess</h2><h3 id="steps"><a href="#steps" class="headerlink" title="steps"></a>steps</h3><ol>
+<li>从训练文本数据中构建词表：将所有出现过的单词根据词频进行排序，并将排序后的单词列表作为最终的词表。</li>
+</ol>
+<h2 id="train"><a href="#train" class="headerlink" title="train"></a>train</h2><h2 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h2><h2 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h2><h4 id="Bug-Description"><a href="#Bug-Description" class="headerlink" title="Bug Description"></a>Bug Description</h4><p>Question occured when I downloaded <strong>fairseq (branch 010, version b5a039c)</strong> by <em>&gt; git clone</em> commond from my own forked respository  and run the following simple toy code. </p>
+<h4 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bart = BARTModel.from_pretrained(&#x27;./checkpoints/bart.base&#x27;, checkpoint_file=&#x27;model.pt&#x27;)</span><br><span class="line">bart.eval()</span><br><span class="line">a = bart.fill_mask([&#x27;The cat &lt;mask&gt; on the &lt;mask&gt;.&#x27;], topk=3, beam=10)</span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+
+<h4 id="Log-of-failed-launch"><a href="#Log-of-failed-launch" class="headerlink" title="Log of failed launch"></a>Log of failed launch</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/data/token_block_dataset.py&quot;, line 90, in _build_slice_indices</span><br><span class="line">    from fairseq.data.token_block_utils_fast import (</span><br><span class="line">ModuleNotFoundError: No module named &#x27;fairseq.data.token_block_utils_fast&#x27;</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;/home/ylli/anaconda3/envs/tf418/lib/python3.7/runpy.py&quot;, line 193, in _run_module_as_main</span><br><span class="line">    &quot;__main__&quot;, mod_spec)</span><br><span class="line">  File &quot;/home/ylli/anaconda3/envs/tf418/lib/python3.7/runpy.py&quot;, line 85, in _run_code</span><br><span class="line">    exec(code, run_globals)</span><br><span class="line">  File &quot;/home/ylli/.vscode-server/extensions/ms-python.python-2022.6.2/pythonFiles/lib/python/debugpy/__main__.py&quot;, line 45, in &lt;module&gt;</span><br><span class="line">    cli.main()</span><br><span class="line">  File &quot;/home/ylli/.vscode-server/extensions/ms-python.python-2022.6.2/pythonFiles/lib/python/debugpy/../debugpy/server/cli.py&quot;, line 444, in main</span><br><span class="line">    run()</span><br><span class="line">  File &quot;/home/ylli/.vscode-server/extensions/ms-python.python-2022.6.2/pythonFiles/lib/python/debugpy/../debugpy/server/cli.py&quot;, line 285, in run_file</span><br><span class="line">    runpy.run_path(target_as_str, run_name=compat.force_str(&quot;__main__&quot;))</span><br><span class="line">  File &quot;/home/ylli/anaconda3/envs/tf418/lib/python3.7/runpy.py&quot;, line 263, in run_path</span><br><span class="line">    pkg_name=pkg_name, script_name=fname)</span><br><span class="line">  File &quot;/home/ylli/anaconda3/envs/tf418/lib/python3.7/runpy.py&quot;, line 96, in _run_module_code</span><br><span class="line">    mod_name, mod_spec, pkg_name, script_name)</span><br><span class="line">  File &quot;/home/ylli/anaconda3/envs/tf418/lib/python3.7/runpy.py&quot;, line 85, in _run_code</span><br><span class="line">    exec(code, run_globals)</span><br><span class="line">  File &quot;/home/ylli/code/bart-ft-WP/finetune.py&quot;, line 25, in &lt;module&gt;</span><br><span class="line">    bart.fill_mask([&#x27;The cat &lt;mask&gt; on the &lt;mask&gt;.&#x27;], topk=3, beam=10)</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/models/bart/hub_interface.py&quot;, line 206, in fill_mask</span><br><span class="line">    batch_hypos = self.generate(batch_tokens, **generate_kwargs)</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/models/bart/hub_interface.py&quot;, line 102, in generate</span><br><span class="line">    for batch in self._build_batches(tokenized_sentences, skip_invalid_size_inputs):</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/hub_utils.py&quot;, line 275, in _build_batches</span><br><span class="line">    dataset=self.task.build_dataset_for_inference(tokens, lengths),</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/tasks/denoising.py&quot;, line 243, in build_dataset_for_inference</span><br><span class="line">    document_sep_len=0,</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/data/token_block_dataset.py&quot;, line 61, in __init__</span><br><span class="line">    sizes, break_mode, document_sep_len, block_size</span><br><span class="line">  File &quot;/home/ylli/code/fairseq/fairseq/data/token_block_dataset.py&quot;, line 96, in _build_slice_indices</span><br><span class="line">    &quot;Please build Cython components with: `pip install --editable .` &quot;</span><br><span class="line">ImportError: Please build Cython components with: `pip install --editable .` or `python setup.py build_ext --inplace`</span><br></pre></td></tr></table></figure>
+
+<h4 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h4><p>I runed following commonds under fairseq directory path:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; pip install Cpython</span><br><span class="line">&gt; python setup.py build_ext --inplace</span><br><span class="line">&gt; pip install --editable .</span><br></pre></td></tr></table></figure>
+
+<p>but the second command failed with some error reports. so it’s assumed that command one and three helps.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/29/hexo%20categories%20setting/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -779,7 +855,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
