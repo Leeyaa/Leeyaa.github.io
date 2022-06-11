@@ -5,7 +5,7 @@ categories:
 - Recommender System
 ---
 
-推荐系统有很多常见的评价指标，本文对常见的一些指标做一个总结
+推荐系统有很多常见的评价指标，本文对这些指标做一个总结。
 
 <!-- more -->
 
@@ -76,7 +76,7 @@ categories:
     -  第一种方法：AUC为ROC曲线下的面积，那我们直接计算面积可得。积为一个个的梯形面积之和，计算的精度与阈值的精度有关。
     - 第二种方法：根据AUC的物理意义，我们计算正样本score大于负样的score的率。取$N*M$（N为正样本数，M为负样本数）个二元组，较score，最后得到AUC。间复杂度为$O(N*M)$.
 
-###  hr hit ratio@K
+###  hr: hit ratio@K
 1. in MF-BPR model , if test dataset inlcudes 1 positive sample and 999 negative sample , if the positive ranks in the top-K prediction , we say it hit the user, mean that the $hit ratio@K = 1$ 
 
 ### ndcg (Normalized Discounted Cumulative Gain)

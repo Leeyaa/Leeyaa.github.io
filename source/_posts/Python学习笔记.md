@@ -1,17 +1,18 @@
 ---
-title: python 初长成
+title: python学习笔记
 date: 2018/6/16 09:55:22
 updated: 2018/12/20 21:26:00
 categories:
 - python
 ---
 
-刚刚开始学习python，多多指教
+单纯记录一些python学习笔记。
 
 <!-- more -->
-# Python data structure
+# Python Data Structure
 1. list
 2. dictionary
+
 # 代码规范
 1. 输入输出
     - print()会依次打印每个字符串，遇到逗号“,”会输出一个空格
